@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> ES 1</title>
+</head>
+<style>
+    #boxe {
+      height:50px;
+              width:50px;
+              border: 3px outset rgb(255, 0, 0);
+              background-color:     rgb(247, 247, 247);
+              margin:5px;
+              padding:15px;
+             float: left;
+    }
+
+    
+       #container{
+        border: 1px outset black;
+        
+        height: 100px;
+        width: 10;
+       }
+    
+       
+  </style>
+ <body>
+    
+ 
+    <div id="boxe">
+        <button>
+               
+        </button>
+    </div>
+   <div id="boxe" class="comm" onclick="comm1()">
+    <button>
+        ↑
+    </button>
+    </div>
+    <div id="boxe"> 
+        <button>
+           
+        </button>
+    </div>
+
+   
+    <br><br><br><br><br><br>
+ 
+   <div id="boxe" class="comm" onclick="comm2()"> 
+    <button>
+        ←
+    </button>
+    </div>
+    <div id="boxe">
+        <button>
+               
+        </button>
+    </div>
+    <div id="boxe" class="comm" onclick="comm4()">
+        <button>
+            ➜
+        </button>
+    </div>
+    <br><br><br> <br><br><br>
+    <div id="boxe">
+        <button>
+                
+        </button>
+    </div>
+    <div id="boxe" class="comm" onclick="comm3()">
+        <button>
+            ↓
+        </button>
+    </div>
+
+    <div id="boxe">
+        <button>
+                
+        </button>
+    </div>
+
+    <br><br><br><br><br><br>
+
+    <div id="container">
+    <p>
+        conteggio su/giù:
+    </p>
+    <p id="comm1">
+        
+    </p>
+
+    <p>
+        conteggio destra/sinistra:
+    </p>
+    
+    <p id="sinistra">
+        
+    </p>
+</div>
+  </body>
+  <script>
+var counterVal = 0;
+        function comm1(){
+    updateDisplay(++counterVal);
+}
+
+function comm3(){
+    updateDisplay(--counterVal);
+}
+
+function updateDisplay(val) {
+    document.getElementById("comm1").innerHTML = val;
+}
+
+
+var counterVal2 = 0;
+        function comm2(){
+
+          
+    updateDisplay2(++counterVal2);
+}
+
+function comm4(){
+    updateDisplay2(--counterVal2);
+}
+
+function updateDisplay2(val2) {
+    document.getElementById("sinistra").innerHTML = val2;
+}
+ 
+
+  </script>
+</html>
