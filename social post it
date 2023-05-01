@@ -1,0 +1,253 @@
+const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+let lib = require('./myutil.js');
+let jsonData = lib.readFile('./data/data.json');
+const app = express();
+const jsonFilePath = './data/data.json';
+
+app.use('/form', express.static(path.join(__dirname, 'form')));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(`${__dirname}/form/form.html`));
+});
+
+app.get('/post', (req, res) => {
+  res.sendFile(path.join(`${__dirname}/post-it/post.html`));
+});
+
+app.get('/data/data.json', (req, res) => {
+  res.sendFile(path.join(`${__dirname}/data/data.json`));
+});
+
+app.get('/viewPost', (req, res) => {
+  res.sendFile(path.join(`${__dirname}/post-it/post.html`));
+});
+
+
+app.post('/viewPost', (req, res) => {
+  res.redirect((path.join(`/viewPost`)));
+});
+
+
+app.post('/add', (req, res) => {
+  const nickname = {
+    nickname: req.body.nickname,
+    commento: req.body.commento
+  };
+
+  // leggi i dati dal file JSON
+  let data = JSON.parse(fs.readFileSync(jsonFilePath));
+
+  // aggiungi il nuovo nickname all'array dei nickname
+  lib.addElementToJSON(data, nickname);
+  lib.writeFileJSON('./data/data.json', data);
+
+  console.log(`Il nickname ${nickname.nickname} con commento "${nickname.commento}" è stato salvato nel file JSON! (ip: ${req.ip})`);
+  res.redirect((path.join(`/post`)));
+});
+
+
+
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
+
+
+
+
+//https://docs.htmlcsstoimage.com/
+//https://www.andreaminini.com/css/come-fare-un-post-it-in-css/
+//https://codepen.io/jweden/pen/kGBBpM
+//https://dev.to/thormeier/fully-responsive-html-css-sticky-note-4okl
+//https://www.fastweb.it/fastweb-plus/digital-magazine/instagram-la-classifica-dei-post-con-piu-like/
+data json
+[{"nickname":"Assistente","commento":"Non c'è la la funzione di 'Mi piace'"},{"nickname":"Prova","commento":"Ciao, questa è una prova!"},{"nickname":"ChatGPT","commento":"dajeroma"},{"nickname":"","commento":""},{"nickname":"","commento":""},{"nickname":"","commento":""},{"nickname":"giordi","commento":"buongiorno"},{"nickname":"giordi","commento":"buongiorno"},{"nickname":"",
+"commento":""},{"nickname":"","commento":""},{"nickname":"","commento":""},{"nickname":"","commento":""},
+{"nickname":"","commento":""},{"nickname":"barchito","commento":"Ciao, questa è una prova"},{"nickname":"","commento":""},{"nickname":"","commento":""},
+{"nickname":"","commento":""},{"nickname":"","commento":""}]
+form css
+body {
+      background-color: #ffffff;
+    }
+    
+    .container {
+      margin-top: 50px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      background-color: #0077be;
+    }
+    
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      color: #212529;
+      margin-bottom: 30px;
+    }
+    
+    .form-group label {
+      font-weight: 600;
+      color: #212529;
+    }
+    
+    .form-control {
+      border-radius: 5px;
+      border-color: #ced4da;
+      box-shadow: none;
+    }
+    
+    .btn-primary {
+      background-color: #4c4cff;
+      border-color: #4c4cff;
+      box-shadow: none;
+      font-weight: 600;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2e2eff;
+      border-color: #2e2eff;
+      box-shadow: none;
+    }
+    form html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Post-it!</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <br>
+    <h1 class="display-3 text-center">Social Post it!</h1><br><hr><br><br>
+    
+
+    <form action="/add" method="POST">
+      <div class="form-group">
+        <h5 for="nickname">Nickname:</h5>
+        <input type="text" class="form-control btn-lg" id="nickname" name="nickname" placeholder="Inserisci il tuo nickname" maxlength="17">
+      </div>
+      <div class="form-group">
+        <h5 for="commento">Commenta:</h5>
+        <input type="text" class="form-control btn-lg" id="commento" name="commento" placeholder="Inserisci il tuo commento" maxlength="90">
+      </div>
+      <div class="d-flex justify-content-between align-items-center">
+        <button type="submit" class="btn btn-danger btn-lg rounded-pill px-5">Visualizza i post</button>
+        <form action="/viewPost" method="POST">
+           <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5">Invia</button>
+        </form>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
+post html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bootstrap 5 - Blog Cards</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+  </head>
+  <body class="bg-light" onload='onFunction()'>
+    <br>
+  <h1 class="display-3 text-center ">Esplora i Post-it:</h1><br><hr><br><br>
+    
+  </body>
+  <script>
+//fai in modo che nel paragrafo con id "para" (riga 11), ci siano gli oggetti nel file data.json nella cartella data
+    function onFunction() {
+  fetch('data/data.json')
+    .then(response => response.json())
+    .then(data => {
+      const container = document.createElement('div');
+      container.classList.add('container-fluid');
+
+      const row = document.createElement('div');
+      row.classList.add('row');
+      row.style.padding = '5px';
+      
+         data.forEach(obj=> {
+        const card = document.createElement('div');
+        card.classList.add('card', 'text-white', 'bg-info'); 
+        card.style.width = '250px';
+        card.style.height = '130px';
+        card.style.marginBottom = '10px'; // Aggiunge uno spazio tra le carte
+        card.style.marginLeft = '100px';
+
+        const like = document.createElement('button');
+        like.classList.add('bg-white'); 
+        like.style.position = 'absolute';
+        like.style.border = 'none';
+        like.style.top = '10px';
+        like.style.right = '10px';
+        like.style.width = '35px';
+        like.style.height = '35px';
+        like.style.borderRadius = '20px';
+        like.textContent = '❤️';
+
+
+        const cardBody = document.createElement('div');
+        cardBody.classList.add('card-body');
+
+        const cardTitle = document.createElement('h5');
+        cardTitle.classList.add('card-title');
+        cardTitle.textContent = obj.nickname;
+
+        const cardComment = document.createElement('p');
+        cardComment.classList.add('card-text');
+        cardComment.textContent = obj.commento;
+
+         if(obj.nickname != "" && obj.commento != ""){
+        cardBody.appendChild(cardTitle);
+        cardBody.appendChild(cardComment);
+        card.appendChild(cardBody);
+        card.appendChild(like);
+        row.appendChild(card);
+
+         }
+      });
+      
+
+      container.appendChild(row);
+      document.querySelector('body').appendChild(container);
+    })
+    .catch(error => console.error('Error loading data:', error));
+}
+
+
+
+
+
+  </script>
+</html>
+
+myutil.js
+
+let fs = require('fs')
+
+function addElementToJSON(jsonData, element) {
+  jsonData.push(element)
+}
+
+function writeFileJSON(file, dataJSON) {
+  fs.writeFile(file, JSON.stringify(dataJSON), (err) => {
+    if (err) {
+      throw err;
+    } else
+      console.log('i dati li ho scritti nel file data.json');
+  })
+}
+
+function readFile(percorsoFile) {
+  var data = fs.readFileSync(percorsoFile, "utf8");
+  console.log("finito readFile function!");
+  return JSON.parse(data);
+}
+
+
+module.exports = { addElementToJSON: addElementToJSON, writeFileJSON: writeFileJSON, readFile: readFile }
